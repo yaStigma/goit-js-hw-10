@@ -10,22 +10,65 @@
 
 
 */
-import axios from "axios";
+import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
 
 const refs = {
-    catBox: document.querySelector(".cat-info"),
+    infoContainer: document.querySelector(".cat-info"),
     selectList: document.querySelector(".breed-select"),
-
 }
-let breed = 1;
 
-function serviceCat(breed) {
-    const BASE_URL = "https://api.thecatapi.com/v1";
-    const END_POINT = "images/search";
-    const API_KEY = "live_ 9oOQb3YZa95vuFJjY96Zv3AmqV5jQ8 nftsmTivVFLfy1KInjHp0Zz85PNAIv mFaE";
+document.addEventListener('DOMContentLoaded', async function () {
+    try {
+      refs.selectList.classList.add('loading'); // Показати loader під час завантаження порід
 
-    const params = new URLSearchParams({
-        api_key: API_KEY,
-        breed
-    })
-}
+    // Отримуємо список порід та заповнюємо вибір пород
+    const breeds = await fetchBreeds();
+    
+    // Очищаємо вибір породи перед додаванням нових опцій
+    refs.selectList.innerHTML = '';
+
+    breeds.forEach(breed => {
+      const option = document.createElement('option');
+      option.value = breed.id;
+      option.textContent = breed.name;
+      refs.selectList.appendChild(option);
+    });
+
+    // Слухаємо зміни вибору породи
+    refs.selectList.addEventListener('change', async function () {
+      const selectedBreedId = refs.selectList.value;
+
+      // Якщо порода вибрана, отримуємо інформацію про кота за цією породою
+      if (selectedBreedId) {
+        try {
+          const catInfo = await fetchCatByBreed(selectedBreedId);
+          displayCatInfo(catInfo[0]); // Показуємо інформацію про кота
+        } catch (error) {
+          console.error(error.message);
+        }
+      } else {
+        // Очищаємо інформацію, якщо порода не вибрана
+        clearCatInfo();
+      }
+    });
+  } catch (error) {
+        console.error(error.message);
+        refs.selectList.classList.remove('loading');
+        showError();
+  }
+
+  // Функція для відображення інформації про кота
+  function displayCatInfo(cat) {
+    refs.infoContainer.innerHTML = `
+      <img src="${cat.url}" alt="${cat.breeds[0].name}">
+      <h2>${cat.breeds[0].name}</h2>
+      <p>${cat.breeds[0].description}</p>
+      <p>Темперамент: ${cat.breeds[0].temperament}</p>
+    `;
+  }
+
+  // Функція для очищення інформації про кота
+  function clearCatInfo() {
+    refs.infoContainer.innerHTML = '';
+  }
+});
