@@ -11,15 +11,32 @@
 
 */
 import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
+import SlimSelect from 'slim-select'
+
+
 
 const refs = {
-    infoContainer: document.querySelector(".cat-info"),
+  infoContainer: document.querySelector(".cat-info"),
+  errorContainer: document.querySelector(".error"),
     selectList: document.querySelector(".breed-select"),
 }
 
+// new SlimSelect({
+//   select: refs.selectList
+//   // Array of Option objects
+//   // data: [{ text: 'Value 1', value: 'value1' }]
+
+//   // or
+
+//   // Array of Optgroups and/or Options
+//   fetchBreeds.data: [{ label: 'Optgroup Label', options: { text: 'Value 1', value: 'value1' } }],
+
+
+// });
+
 document.addEventListener('DOMContentLoaded', async function () {
     try {
-      refs.selectList.classList.add('loading'); // Показати loader під час завантаження порід
+     refs.selectList.classList.add('loading'); // Показати loader під час завантаження порід
 
     // Отримуємо список порід та заповнюємо вибір пород
     const breeds = await fetchBreeds();
@@ -33,7 +50,9 @@ document.addEventListener('DOMContentLoaded', async function () {
       option.textContent = breed.name;
       refs.selectList.appendChild(option);
     });
-
+      
+ refs.selectList.classList.remove('loading');
+clearError();
     // Слухаємо зміни вибору породи
     refs.selectList.addEventListener('change', async function () {
       const selectedBreedId = refs.selectList.value;
@@ -41,14 +60,21 @@ document.addEventListener('DOMContentLoaded', async function () {
       // Якщо порода вибрана, отримуємо інформацію про кота за цією породою
       if (selectedBreedId) {
         try {
+          refs.selectList.classList.add('loading');
           const catInfo = await fetchCatByBreed(selectedBreedId);
           displayCatInfo(catInfo[0]); // Показуємо інформацію про кота
+        clearError();
         } catch (error) {
           console.error(error.message);
+           showError();
+        } finally {
+          refs.selectList.classList.remove('loading');
         }
+        
       } else {
         // Очищаємо інформацію, якщо порода не вибрана
         clearCatInfo();
+                clearError();
       }
     });
   } catch (error) {
@@ -56,7 +82,13 @@ document.addEventListener('DOMContentLoaded', async function () {
         refs.selectList.classList.remove('loading');
         showError();
   }
-
+ function showError() {
+    refs.infoContainer.innerHTML = 'Oops! Something went wrong! Try reloading the page!';
+  }
+  function clearError() {
+        refs.errorContainer.innerHTML = '';
+  }
+  
   // Функція для відображення інформації про кота
   function displayCatInfo(cat) {
     refs.infoContainer.innerHTML = `
