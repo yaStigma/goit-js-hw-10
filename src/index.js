@@ -1,15 +1,4 @@
-/*
-1. робимо запит на сервер 
-2. вішаємо слухача подій на select по кліку -> виводиться випадаючий список
-3. Викликати функцію для запиту на сервер і передати породу кішки
-3.1 створити розмітку , перебор масиву даних
-3.2 відмальовати розмітку на сторінці
-4.1 описати функцію (у якості параметру буде порода кішки, за дефолтом перша)
-4.2 повертаємо результат виклику функції фетч (в середині робимо запит та стандартні перевірки )
 
-
-
-*/
 import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
 import SlimSelect from 'slim-select'
 
@@ -36,12 +25,12 @@ const refs = {
 
 document.addEventListener('DOMContentLoaded', async function () {
     try {
-     refs.selectList.classList.add('loading'); // Показати loader під час завантаження порід
+     refs.selectList.classList.add('loading'); 
 
-    // Отримуємо список порід та заповнюємо вибір пород
+
     const breeds = await fetchBreeds();
     
-    // Очищаємо вибір породи перед додаванням нових опцій
+
     refs.selectList.innerHTML = '';
 
     breeds.forEach(breed => {
@@ -53,16 +42,16 @@ document.addEventListener('DOMContentLoaded', async function () {
       
  refs.selectList.classList.remove('loading');
 clearError();
-    // Слухаємо зміни вибору породи
+ 
     refs.selectList.addEventListener('change', async function () {
       const selectedBreedId = refs.selectList.value;
 
-      // Якщо порода вибрана, отримуємо інформацію про кота за цією породою
+   
       if (selectedBreedId) {
         try {
           refs.selectList.classList.add('loading');
           const catInfo = await fetchCatByBreed(selectedBreedId);
-          displayCatInfo(catInfo[0]); // Показуємо інформацію про кота
+          displayCatInfo(catInfo[0]); 
         clearError();
         } catch (error) {
           console.error(error.message);
@@ -72,7 +61,7 @@ clearError();
         }
         
       } else {
-        // Очищаємо інформацію, якщо порода не вибрана
+       
         clearCatInfo();
                 clearError();
       }
@@ -89,7 +78,7 @@ clearError();
         refs.errorContainer.innerHTML = '';
   }
   
-  // Функція для відображення інформації про кота
+ 
   function displayCatInfo(cat) {
     refs.infoContainer.innerHTML = `
       <img src="${cat.url}" alt="${cat.breeds[0].name}">
@@ -99,7 +88,7 @@ clearError();
     `;
   }
 
-  // Функція для очищення інформації про кота
+
   function clearCatInfo() {
     refs.infoContainer.innerHTML = '';
   }
