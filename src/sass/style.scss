@@ -1,0 +1,60 @@
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 10;
+  padding: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  //   height: 100vh;
+}
+
+.loader,
+.error {
+  display: none;
+  text-align: center;
+  margin-top: 20px;
+  color: red;
+}
+
+.breed-select {
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.cat-info {
+  text-align: left;
+  margin-top: 20px;
+
+  img {
+    max-width: 40%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    float: left;
+    margin-right: 20px;
+  }
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+}
+
+.loading {
+  display: block;
+}
+
+.error {
+  display: block;
+}
+
+.not-loading {
+  display: none;
+}
